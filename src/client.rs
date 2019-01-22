@@ -13,7 +13,7 @@ fn test() {
     client(addr, config, |_stream| Ok(()));
 }
 
-fn client<F>(addr: SocketAddr, tls_config: ClientConfig, handler: F)
+pub fn client<F>(addr: SocketAddr, tls_config: ClientConfig, handler: F)
 where
     F: Fn(TlsStream<TcpStream, ClientSession>) -> Result<(), io::Error> + Send + Sync + 'static,
 {

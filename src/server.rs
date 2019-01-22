@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use super::{load_certs, load_private_key};
+use super::util::{load_certs, load_private_key};
 use std::{net::SocketAddr, sync::Arc};
 use tokio::{
     net::TcpListener,
@@ -20,7 +20,7 @@ fn test() {
     server(addr, config, |_stream| Ok(()));
 }
 
-fn server<F>(addr: SocketAddr, tls_config: ServerConfig, handler: F)
+pub fn server<F>(addr: SocketAddr, tls_config: ServerConfig, handler: F)
 where
     F: Fn(TlsStream<TcpStream, ServerSession>) -> Result<(), std::io::Error>
         + Send
