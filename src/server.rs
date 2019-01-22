@@ -2,7 +2,6 @@
 use super::{load_certs, load_private_key};
 use std::{net::SocketAddr, sync::Arc};
 use tokio::{
-    //io::{self, AsyncRead},
     net::TcpListener,
     prelude::{Future, Stream},
 };
@@ -23,7 +22,10 @@ fn test() {
 
 fn server<F>(addr: SocketAddr, tls_config: ServerConfig, handler: F)
 where
-    F: Fn(TlsStream<TcpStream, ServerSession>) -> Result<(), std::io::Error> + Send + Sync + 'static,
+    F: Fn(TlsStream<TcpStream, ServerSession>) -> Result<(), std::io::Error>
+        + Send
+        + Sync
+        + 'static,
 {
     let handler = Arc::new(handler);
     let tcp = TcpListener::bind(&addr).unwrap();
