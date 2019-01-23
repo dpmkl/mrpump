@@ -7,3 +7,5 @@ The handler returns directly to the underlying future.
     Fn(TlsStream<TcpStream, ServerSession>) -> Result<(), std::io::Error>
 ```
 
+ :warning: This is personal playground toy project, nothing but bugs can be guaranteed! :warning:
+
