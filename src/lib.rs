@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate failure;
 
+mod acl;
+pub use crate::acl::AccessControl;
+
 mod client;
 pub use crate::client::client as spawn_client;
 mod server;
@@ -20,5 +23,5 @@ pub mod util {
     }
 
     pub use crate::load_helper::{load_certs, load_private_key};
-    pub use crate::rcgen_helper::{rcgen_self_signed};
+    pub use crate::rcgen_helper::rcgen_self_signed;
 }

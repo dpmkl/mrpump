@@ -1,5 +1,8 @@
 #![allow(dead_code)]
-use super::util::{load_certs, load_private_key};
+use super::{
+    util::{load_certs, load_private_key},
+    AccessControl,
+};
 use std::{net::SocketAddr, sync::Arc};
 use tokio::{
     net::TcpListener,
@@ -17,10 +20,10 @@ fn test() {
     config
         .set_single_cert(load_certs("").unwrap(), load_private_key("").unwrap())
         .expect("invalid key or certificate");
-    server(addr, config, |_stream| Ok(()));
+    server(addr, config, AccessControl::None, |_stream| Ok(()));
 }
 
-pub fn server<F>(addr: SocketAddr, tls_config: ServerConfig, handler: F)
+pub fn server<F>(addr: SocketAddr, tls_config: ServerConfig, acl: AccessControl, handler: F)
 where
     F: Fn(TlsStream<TcpStream, ServerSession>) -> Result<(), std::io::Error>
         + Send
@@ -31,13 +34,15 @@ where
     let tcp = TcpListener::bind(&addr).unwrap();
     let tls = TlsAcceptor::from(Arc::new(tls_config));
     let task = tcp.incoming().for_each(move |stream| {
-        let handler = handler.clone();
-        let ssl = tls
-            .accept(stream)
-            .and_then(move |stream| handler(stream))
-            .map_err(move |err| println!("Error: {:?} - {:?}", err, addr));
-        tokio::spawn(ssl);
-
+        let addr = stream.peer_addr()?;
+        if acl.can_pass(addr.ip()) {
+            let handler = handler.clone();
+            let ssl = tls
+                .accept(stream)
+                .and_then(move |stream| handler(stream))
+                .map_err(move |err| println!("Error: {:?} - {:?}", err, addr));
+            tokio::spawn(ssl);
+        }
         Ok(())
     });
     tokio::run(task.map_err(drop));

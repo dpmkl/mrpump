@@ -8,6 +8,7 @@ edition = "2018"
 
 [dependencies]
 failure = "0.1"
+ipnetwork = "0.13"
 rcgen = "0.2"
 rustls = "0.15"
 tokio = "0.1.14"

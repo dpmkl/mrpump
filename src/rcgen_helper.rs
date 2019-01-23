@@ -5,7 +5,9 @@ use rcgen::generate_simple_self_signed;
 use rustls::{Certificate, PrivateKey};
 use std::io::BufReader;
 
-pub fn rcgen_self_signed(subject_alt_names: Vec<String>) -> Result<(Certificate,PrivateKey), Error> {
+pub fn rcgen_self_signed(
+    subject_alt_names: Vec<String>,
+) -> Result<(Certificate, PrivateKey), Error> {
     let x509 = generate_simple_self_signed(subject_alt_names);
     let cert = x509.serialize_pem();
     let mut cert = BufReader::new(cert.as_bytes());
