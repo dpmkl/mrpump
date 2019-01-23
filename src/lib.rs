@@ -7,7 +7,17 @@ mod server;
 pub use crate::server::server as spawn_server;
 
 mod load_helper;
+mod rcgen_helper;
 
 pub mod util {
-    pub use crate::load_helper::{load_certs, load_private_key, TlsConfigError};
+
+    #[derive(Debug, Fail)]
+    pub enum TlsConfigError {
+        #[fail(display = "Could not read certificate file '{}'!", file_name)]
+        CertificateParsingError { file_name: String },
+        #[fail(display = "Could not read private key file '{}'!", file_name)]
+        PrivateKeyParsingError { file_name: String },
+    }
+
+    pub use crate::load_helper::{load_certs, load_private_key};
 }

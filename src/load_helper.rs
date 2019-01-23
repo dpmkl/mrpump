@@ -1,3 +1,4 @@
+use crate::util::TlsConfigError;
 use failure::Error;
 use rustls::{Certificate, PrivateKey};
 use std::{
@@ -6,15 +7,7 @@ use std::{
     str::FromStr,
 };
 
-#[derive(Debug, Fail)]
-pub enum TlsConfigError {
-    #[fail(display = "Could not read certificate file '{}'!", file_name)]
-    CertificateParsingError { file_name: String },
-    #[fail(display = "Could not read private key file '{}'!", file_name)]
-    PrivateKeyParsingError { file_name: String },
-}
-
-fn load_certs_wrapped<R: BufRead>(
+pub fn load_certs_wrapped<R: BufRead>(
     file_name: &str,
     mut reader: &mut R,
 ) -> Result<Vec<Certificate>, TlsConfigError> {
