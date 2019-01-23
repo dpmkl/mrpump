@@ -20,4 +20,5 @@ pub mod util {
     }
 
     pub use crate::load_helper::{load_certs, load_private_key};
+    pub use crate::rcgen_helper::{rcgen_self_signed};
 }

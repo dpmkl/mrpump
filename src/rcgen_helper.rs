@@ -1,5 +1,5 @@
+#[allow(dead_code)]
 use crate::load_helper::load_certs_wrapped;
-use crate::util::TlsConfigError;
 use failure::Error;
 use rcgen::generate_simple_self_signed;
 use rustls::{Certificate, PrivateKey};
