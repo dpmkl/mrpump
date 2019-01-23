@@ -9,3 +9,7 @@ pub fn get_loopback_v4_sock_addr_base() -> SocketAddr {
 pub fn get_loopback_v4_sock_addr(port: u16) -> SocketAddr {
     format!("0.0.0.0:{}", port).parse::<SocketAddr>().unwrap()
 }
+
+pub fn get_subject_alt_names() -> Vec<String> {
+    vec!["hello.world.example".to_string(), "localhost".to_string()]
+}
