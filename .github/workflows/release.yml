@@ -70,46 +70,6 @@ jobs:
           cp target/${{ matrix.target }}/release/mrpump target/release/mrpump
           cargo generate-rpm --output mrpump_${{ matrix.arch }}.rpm
 
-      - name: Build Arch Package
-        if: matrix.target == 'x86_64-unknown-linux-musl'
-        run: |
-          mkdir -p arch-build
-          cp target/${{ matrix.target }}/release/mrpump arch-build/
-          cp dist/mrpump.service arch-build/
-          cp dist/config.yaml arch-build/
-          cp LICENSE arch-build/
-          
-          # Prepare version
-          PKG_VERSION=$(echo "${GITHUB_REF#refs/tags/}" | sed 's/^v//')
-          
-          cat > arch-build/PKGBUILD <<'EOF'
-          pkgname=mrpump-bin
-          pkgver=REPLACE_ME_VER
-          pkgrel=1
-          pkgdesc="A simple TCP socket proxy (binary release)"
-          arch=('x86_64')
-          url="https://github.com/mrpump/mrpump"
-          license=('MIT')
-          provides=('mrpump')
-          conflicts=('mrpump')
-          
-          package() {
-            install -Dm755 "$srcdir/mrpump" "$pkgdir/usr/bin/mrpump"
-            install -Dm644 "$srcdir/mrpump.service" "$pkgdir/usr/lib/systemd/system/mrpump.service"
-            install -Dm644 "$srcdir/config.yaml" "$pkgdir/etc/mrpump/config.yaml"
-            install -Dm644 "$srcdir/LICENSE" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
-          }
-          EOF
-          
-          sed -i "s/REPLACE_ME_VER/$PKG_VERSION/" arch-build/PKGBUILD
-          
-          docker run --rm -v "$(pwd)/arch-build:/pkg" -w /pkg archlinux:latest /bin/bash -c "
-            useradd -m builduser && \
-            chown -R builduser:builduser /pkg && \
-            sudo -u builduser makepkg --nodeps --nocheck
-          "
-          mv arch-build/*.pkg.tar.zst ./mrpump_x64.pkg.tar.zst
-
       - name: Package tarball
         run: |
           mkdir -p mrpump_pkg/mrpump
@@ -127,8 +87,8 @@ jobs:
             mrpump-*.tar.gz
             mrpump_*.deb
             mrpump_*.rpm
-            *.pkg.tar.zst
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
