@@ -59,13 +59,13 @@ jobs:
 
       - name: Build .deb package
         run: |
+          mkdir -p target/release
+          cp target/${{ matrix.target }}/release/mrpump target/release/mrpump
           cargo deb --no-build --target ${{ matrix.target }} --output mrpump_${{ matrix.arch }}.deb
 
       - name: Build .rpm package
         run: |
-          # cargo-generate-rpm doesn't always handle --target perfectly with --no-build
-          # so we ensure the binary is where it expects or point to it
-          # Actually, we can use the --binary flag if available or just move it.
+          # Already copied above, but for clarity:
           mkdir -p target/release
           cp target/${{ matrix.target }}/release/mrpump target/release/mrpump
           cargo generate-rpm --output mrpump_${{ matrix.arch }}.rpm

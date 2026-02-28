@@ -27,6 +27,7 @@ It allows forwarding TCP traffic from one address to another."""
 section = "net"
 priority = "optional"
 assets = [
+    ["target/release/mrpump", "/usr/bin/mrpump", "755"],
     ["dist/mrpump.service", "/lib/systemd/system/mrpump.service", "644"],
     ["dist/config.yaml", "/etc/mrpump/config.yaml", "644"],
 ]
@@ -34,6 +35,7 @@ maintainer-scripts = "dist/debian/"
 
 [package.metadata.generate-rpm]
 assets = [
+    { source = "target/release/mrpump", dest = "/usr/bin/mrpump", mode = "755" },
     { source = "dist/mrpump.service", dest = "/usr/lib/systemd/system/mrpump.service", mode = "644" },
     { source = "dist/config.yaml", dest = "/etc/mrpump/config.yaml", mode = "644", config = true },
 ]
